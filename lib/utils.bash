@@ -34,29 +34,25 @@ list_all_versions() {
 }
 
 detect_os() {
-	if [ "$OS" = "unknown" ]; then
-		UNAME="$(command -v uname)"
+	UNAME="$(command -v uname)"
 
-		case $("${UNAME}" | tr '[:upper:]' '[:lower:]') in
-		linux*)
-			echo 'Linux'
-			;;
-		darwin*)
-			echo 'Darwin'
-			;;
-		msys* | cygwin* | mingw*)
-			echo 'Windows'
-			;;
-		nt | win*)
-			echo 'Windows'
-			;;
-		*)
-			fail "Unknown operating system. Please provide the operating system version by setting \$OS."
-			;;
-		esac
-	else
-		echo "$OS"
-	fi
+	case $("${UNAME}" | tr '[:upper:]' '[:lower:]') in
+	linux*)
+		echo 'Linux'
+		;;
+	darwin*)
+		echo 'Darwin'
+		;;
+	msys* | cygwin* | mingw*)
+		echo 'Windows'
+		;;
+	nt | win*)
+		echo 'Windows'
+		;;
+	*)
+		fail "Unknown operating system. Please provide the operating system version by setting \$OS."
+		;;
+	esac
 }
 
 detect_arch() {
