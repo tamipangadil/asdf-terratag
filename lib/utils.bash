@@ -26,7 +26,7 @@ sort_versions() {
 list_github_tags() {
 	git ls-remote --tags --refs "$GH_REPO" |
 		grep -o 'refs/tags/.*' | cut -d/ -f3- |
-		sed 's/^v//' # NOTE: You might want to adapt this sed to remove non-version strings from tags
+		sed 's/^v//' | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | grep -v '^0\.1\.[0-9]\+$'
 }
 
 list_all_versions() {
@@ -60,13 +60,12 @@ detect_arch() {
 		fail "\$ARCH not provided and could not call uname -m."
 	fi
 
-	# Translate to Auth0 CLI arch names/explicit list of supported arch
-	if [ "${ARCH}" == "x86_64" ]; then
-		echo "$ARCH"
-	elif [ "${ARCH}" == "amd64" ]; then
+	if [ "${ARCH}" == "amd64" ]; then
 		echo "x86_64"
 	elif [ "${ARCH}" == "arm64" ]; then
 		echo "$ARCH"
+	elif [ "${ARCH}" == "x86_64" ]; then
+		fail "Unsupported architecture: $ARCH"
 	elif [ "${ARCH}" == "i386" ]; then
 		fail "Unsupported architecture: $ARCH"
 	elif [ "${ARCH}" == "armv7" ]; then
