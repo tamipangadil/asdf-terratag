@@ -91,7 +91,7 @@ download_release() {
 
 	os=$(detect_os)
 	arch=$(detect_arch "$os")
-	url="$GH_REPO/releases/download/v${version}/terratag-${version}_${os}_${arch}.tar.gz"
+	url="$GH_REPO/releases/download/v${version}/terratag_${version}_${os}_${arch}.tar.gz"
 
 	echo "* Downloading $TOOL_NAME release $version..."
 	curl "${curl_opts[@]}" -o "$filename" -C - "$url" || fail "Could not download $url"
