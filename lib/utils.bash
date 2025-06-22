@@ -60,13 +60,12 @@ detect_arch() {
 		fail "\$ARCH not provided and could not call uname -m."
 	fi
 
-	# Translate to Auth0 CLI arch names/explicit list of supported arch
-	if [ "${ARCH}" == "x86_64" ]; then
-		echo "$ARCH"
-	elif [ "${ARCH}" == "amd64" ]; then
+	if [ "${ARCH}" == "amd64" ]; then
 		echo "x86_64"
 	elif [ "${ARCH}" == "arm64" ]; then
 		echo "$ARCH"
+	elif [ "${ARCH}" == "x86_64" ]; then
+		fail "Unsupported architecture: $ARCH"
 	elif [ "${ARCH}" == "i386" ]; then
 		fail "Unsupported architecture: $ARCH"
 	elif [ "${ARCH}" == "armv7" ]; then
