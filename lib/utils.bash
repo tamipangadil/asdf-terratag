@@ -2,7 +2,6 @@
 
 set -euo pipefail
 
-# TODO: Ensure this is the correct GitHub homepage where releases can be downloaded for terratag.
 GH_REPO="https://github.com/env0/terratag"
 TOOL_NAME="terratag"
 TOOL_TEST="terratag --help"
@@ -31,9 +30,58 @@ list_github_tags() {
 }
 
 list_all_versions() {
-	# TODO: Adapt this. By default we simply list the tag names from GitHub releases.
-	# Change this function if terratag has other means of determining installable versions.
 	list_github_tags
+}
+
+detect_os() {
+	if [ "$OS" = "unknown" ]; then
+		UNAME="$(command -v uname)"
+
+		case $("${UNAME}" | tr '[:upper:]' '[:lower:]') in
+		linux*)
+			echo 'Linux'
+			;;
+		darwin*)
+			echo 'Darwin'
+			;;
+		msys* | cygwin* | mingw*)
+			echo 'Windows'
+			;;
+		nt | win*)
+			echo 'Windows'
+			;;
+		*)
+			fail "Unknown operating system. Please provide the operating system version by setting \$OS."
+			;;
+		esac
+	else
+		echo "$OS"
+	fi
+}
+
+detect_arch() {
+	if [ "$ARCH" = "unknown" ]; then
+		if ! ARCH="$(uname -m)"; then
+			fail "\$ARCH not provided and could not call uname -m."
+		fi
+
+		# Translate to Auth0 CLI arch names/explicit list of supported arch
+		if [ "${ARCH}" == "x86_64" ]; then
+			echo "$ARCH"
+		elif [ "${ARCH}" == "amd64" ]; then
+			echo "x86_64"
+		elif [ "${ARCH}" == "arm64" ]; then
+			echo "$ARCH"
+		elif [ "${ARCH}" == "i386" ]; then
+			fail "Unsupported architecture: $ARCH"
+		elif [ "${ARCH}" == "armv7" ]; then
+			fail "Unsupported architecture: $ARCH"
+		else
+			fail "Unknown architecture. Please provide the architecture by setting \$ARCH."
+		fi
+	else
+		echo "$ARCH"
+	fi
 }
 
 download_release() {
@@ -41,8 +89,9 @@ download_release() {
 	version="$1"
 	filename="$2"
 
-	# TODO: Adapt the release URL convention for terratag
-	url="$GH_REPO/releases/download/${version}/${filename}"
+	os=$(detect_os)
+	arch=$(detect_arch "$os")
+	url="$GH_REPO/releases/download/v${version}/terratag-${version}_${os}_${arch}.tar.gz"
 
 	echo "* Downloading $TOOL_NAME release $version..."
 	curl "${curl_opts[@]}" -o "$filename" -C - "$url" || fail "Could not download $url"
