@@ -56,27 +56,23 @@ detect_os() {
 }
 
 detect_arch() {
-	if [ "$ARCH" = "unknown" ]; then
-		if ! ARCH="$(uname -m)"; then
-			fail "\$ARCH not provided and could not call uname -m."
-		fi
+	if ! ARCH="$(uname -m)"; then
+		fail "\$ARCH not provided and could not call uname -m."
+	fi
 
-		# Translate to Auth0 CLI arch names/explicit list of supported arch
-		if [ "${ARCH}" == "x86_64" ]; then
-			echo "$ARCH"
-		elif [ "${ARCH}" == "amd64" ]; then
-			echo "x86_64"
-		elif [ "${ARCH}" == "arm64" ]; then
-			echo "$ARCH"
-		elif [ "${ARCH}" == "i386" ]; then
-			fail "Unsupported architecture: $ARCH"
-		elif [ "${ARCH}" == "armv7" ]; then
-			fail "Unsupported architecture: $ARCH"
-		else
-			fail "Unknown architecture. Please provide the architecture by setting \$ARCH."
-		fi
-	else
+	# Translate to Auth0 CLI arch names/explicit list of supported arch
+	if [ "${ARCH}" == "x86_64" ]; then
 		echo "$ARCH"
+	elif [ "${ARCH}" == "amd64" ]; then
+		echo "x86_64"
+	elif [ "${ARCH}" == "arm64" ]; then
+		echo "$ARCH"
+	elif [ "${ARCH}" == "i386" ]; then
+		fail "Unsupported architecture: $ARCH"
+	elif [ "${ARCH}" == "armv7" ]; then
+		fail "Unsupported architecture: $ARCH"
+	else
+		fail "Unknown architecture. Please provide the architecture by setting \$ARCH."
 	fi
 }
 
