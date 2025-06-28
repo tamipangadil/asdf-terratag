@@ -46,6 +46,12 @@ download_release() {
 	fi
 
 	case "$uname_s" in
+	linux)
+		echo 'linux'
+		;;
+	darwin)
+		echo 'darwin'
+		;;
 	msys | cygwin | mingw)
 		echo 'windows'
 		;;
