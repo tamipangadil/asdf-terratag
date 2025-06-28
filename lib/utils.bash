@@ -45,6 +45,21 @@ download_release() {
 		uname_m="amd64"
 	fi
 
+	case "$uname_m" in
+	aarch64 | x86_64)
+		echo 'amd64'
+		;;
+	amd64)
+		echo 'amd64'
+		;;
+	arm64)
+		echo 'arm64'
+		;;
+	*)
+		fail "ARCH not supported: $uname_m"
+		;;
+	esac
+
 	case "$uname_s" in
 	linux)
 		echo 'linux'
