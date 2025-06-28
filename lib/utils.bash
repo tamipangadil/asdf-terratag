@@ -41,8 +41,8 @@ download_release() {
 	uname_s="$(uname -s | tr '[:upper:]' '[:lower:]')"
 	uname_m="$(uname -m)"
 
-	if [ "$uname_m" = "arm64" ]; then
-		uname_m="aarch64"
+	if [ "$uname_m" = "aarch64" ]; then
+		uname_m="amd64"
 	fi
 
 	case "$uname_s" in
