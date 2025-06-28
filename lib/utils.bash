@@ -41,40 +41,36 @@ download_release() {
 	uname_s="$(uname -s | tr '[:upper:]' '[:lower:]')"
 	uname_m="$(uname -m)"
 
-	if [ "$uname_m" = "aarch64" ]; then
-		uname_m="amd64"
-	fi
-
-	case "$uname_m" in
-	aarch64 | x86_64)
-		echo 'amd64'
-		;;
-	amd64)
-		echo 'amd64'
-		;;
-	arm64)
-		echo 'arm64'
-		;;
-	*)
-		fail "ARCH not supported: $uname_m"
-		;;
-	esac
-
 	case "$uname_s" in
 	linux)
-		echo 'linux'
+		uname_s='linux'
 		;;
 	darwin)
-		echo 'darwin'
+		uname_s='darwin'
 		;;
 	msys | cygwin | mingw)
-		echo 'windows'
+		uname_s='windows'
 		;;
 	nt | win)
-		echo 'windows'
+		uname_s='windows'
 		;;
 	*)
 		fail "OS not supported: $uname_s"
+		;;
+	esac
+
+	case "$uname_m" in
+	aarch64 | x86_64)
+		uname_m='amd64'
+		;;
+	amd64)
+		uname_m='amd64'
+		;;
+	arm64)
+		uname_m='arm64'
+		;;
+	*)
+		fail "ARCH not supported: $uname_m"
 		;;
 	esac
 
