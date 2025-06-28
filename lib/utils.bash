@@ -33,56 +33,31 @@ list_all_versions() {
 	list_github_tags
 }
 
-detect_os() {
-	UNAME="$(command -v uname)"
-
-	case $("${UNAME}" | tr '[:upper:]' '[:lower:]') in
-	linux*)
-		echo 'Linux'
-		;;
-	darwin*)
-		echo 'Darwin'
-		;;
-	msys* | cygwin* | mingw*)
-		echo 'Windows'
-		;;
-	nt | win*)
-		echo 'Windows'
-		;;
-	*)
-		fail "Unknown operating system. Please provide the operating system version by setting \$OS."
-		;;
-	esac
-}
-
-detect_arch() {
-	if ! ARCH="$(uname -m)"; then
-		fail "\$ARCH not provided and could not call uname -m."
-	fi
-
-	if [ "${ARCH}" == "amd64" ]; then
-		echo "x86_64"
-	elif [ "${ARCH}" == "arm64" ]; then
-		echo "$ARCH"
-	elif [ "${ARCH}" == "x86_64" ]; then
-		fail "Unsupported architecture: $ARCH"
-	elif [ "${ARCH}" == "i386" ]; then
-		fail "Unsupported architecture: $ARCH"
-	elif [ "${ARCH}" == "armv7" ]; then
-		fail "Unsupported architecture: $ARCH"
-	else
-		fail "Unknown architecture. Please provide the architecture by setting \$ARCH."
-	fi
-}
-
 download_release() {
 	local version filename url
 	version="$1"
 	filename="$2"
 
-	os=$(detect_os)
-	arch=$(detect_arch "$os")
-	url="$GH_REPO/releases/download/v${version}/terratag_${version}_${os}_${arch}.tar.gz"
+	uname_s="$(uname -s | tr '[:upper:]' '[:lower:]')"
+	uname_m="$(uname -m)"
+
+	if [ "$uname_m" = "arm64" ]; then
+		uname_m="aarch64"
+	fi
+
+	case "$uname_s" in
+	msys | cygwin | mingw)
+		echo 'windows'
+		;;
+	nt | win)
+		echo 'windows'
+		;;
+	*)
+		fail "OS not supported: $uname_s"
+		;;
+	esac
+
+	url="$GH_REPO/releases/download/v${version}/terratag_${version}_${uname_s}_${uname_m}.tar.gz"
 
 	echo "* Downloading $TOOL_NAME release $version..."
 	curl "${curl_opts[@]}" -o "$filename" -C - "$url" || fail "Could not download $url"
